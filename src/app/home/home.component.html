@@ -1,0 +1,16 @@
+
+<div *ngIf="currentPage=='home'" id="home">
+  <input id="name-input" type="text" name="Name" placeholder="Choose a name" [(ngModel)]="playerName">
+  <button [disabled]="!playerName" id="join-lobby-button" type="button" (click)="joinLobby()">Join a lobby</button>
+  <button [disabled]="!playerName" id="create-lobby-button" type="button" (click)="createLobby()">Create a lobby</button>
+</div>
+
+<div *ngIf="currentPage=='join-lobby'" id="join-lobby">
+  <input id="lobby-input" type="text" name="Lobby" placeholder="Enter lobby name" [(ngModel)]="lobbyId">
+  <button [disabled]="!lobbyId" id="join-button" type="button" (click)="submitJoinLobby()">Join</button>
+  <button id="cancel-button" type="button" (click)="goHome()">Cancel</button>
+</div>
+
+<div *ngIf="currentPage=='waiting'" id="waiting-room">
+  <button id="leave-button" type="button" (click)="leaveGame()">Leave</button>
+</div>
