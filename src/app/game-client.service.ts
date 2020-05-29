@@ -15,6 +15,15 @@ export class GameClientService {
   };
   observer: Observer<string>;
 
+  reset() {
+    this.playerId = null;
+    this.lobby = {
+      id: '',
+      players: []
+    };
+    this.socket = null;
+  }
+
   connect() {
     if (this.socket) return;
     this.socket = new WebSocket(environment.api);
@@ -36,7 +45,7 @@ export class GameClientService {
   handleMessage(data) {
     switch(data.type) {
       case 'handshake_ack':
-        this.playerId = data.playerId;
+        this .playerId = data.playerId;
         this.lobby.id = data.lobbyId;
         if (data.code == 1)
           this.lobby.players.push({name: data.name, id: data.playerId});
@@ -70,7 +79,7 @@ export class GameClientService {
   close() {
     if (this.socket) {
       this.socket.close();
-      this.socket = null;
+      this.reset();
     }
   }
 
