@@ -35,20 +35,26 @@ export class GameClientService {
     this.socket.onclose = event => {
       console.log(event);
       this.socket = null;
+      // TODO Attempt a reconnect?
     }
     this.socket.onerror = event => {
       console.log(event);
       this.socket = null;
+      // TODO Attempt a reconnect?
     }
   }
 
   handleMessage(data) {
     switch(data.type) {
       case 'handshake_ack':
-        this .playerId = data.playerId;
-        this.lobby.id = data.lobbyId;
+        if (data.code >= 1)
+          this.lobby.id = data.lobbyId;
         if (data.code == 1)
-          this.lobby.players.push({name: data.name, id: data.playerId});
+          this.playerId = data.controller;
+        if (data.code == 2) {
+          // this.lobby.players.push({name: data.name, id: data.playerId});
+          this.playerId = data.playerId;
+        }
         break;
       case 'start_ack':
         break;

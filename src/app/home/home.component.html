@@ -2,7 +2,7 @@
 <div *ngIf="currentPage=='home'" id="home">
   <input id="name-input" type="text" name="Name" placeholder="Choose a name" [(ngModel)]="playerName">
   <button [disabled]="!playerName" id="join-lobby-button" type="button" (click)="goJoinLobby()">Join a lobby</button>
-  <button [disabled]="!playerName" id="create-lobby-button" type="button" (click)="submitCreateLobby()">Create a lobby</button>
+  <button id="create-lobby-button" type="button" (click)="submitCreateLobby()">Create a lobby</button>
 </div>
 
 <div *ngIf="currentPage=='join-lobby'" id="join-lobby">

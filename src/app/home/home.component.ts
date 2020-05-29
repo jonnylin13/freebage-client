@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
   }
 
   submitCreateLobby() {
-    this.gameClient.send({type: 'handshake', name: this.playerName});
+    this.gameClient.send({type: 'handshake'/**, name: this.playerName*/});
   }
 
   startGame() {
