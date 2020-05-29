@@ -9,14 +9,15 @@ export class GameClientService {
 
   private socket: any;
   playerId: string;
-  lobbyId: string;
+  lobby: any = {
+    id: '',
+    players: []
+  };
   observer: Observer<string>;
 
-  constructor() {
+  connect() {
+    if (this.socket) return;
     this.socket = new WebSocket(environment.api);
-    this.socket.onopen = () => {
-      console.log('WebSocket connected');
-    }
     this.socket.onmessage = event => {
       let data = JSON.parse(event.data);
       this.handleMessage(data);
@@ -24,9 +25,11 @@ export class GameClientService {
     }
     this.socket.onclose = event => {
       console.log(event);
+      this.socket = null;
     }
     this.socket.onerror = event => {
       console.log(event);
+      this.socket = null;
     }
   }
 
@@ -34,9 +37,14 @@ export class GameClientService {
     switch(data.type) {
       case 'handshake_ack':
         this.playerId = data.playerId;
-        this.lobbyId = data.lobbyId;
+        this.lobby.id = data.lobbyId;
+        if (data.code == 1)
+          this.lobby.players.push({name: data.name, id: data.playerId});
         break;
       case 'start_ack':
+        break;
+      case 'update_lobby':
+        this.lobby.players = data.players;
         break;
     }
   }
@@ -51,13 +59,18 @@ export class GameClientService {
     if (this.socket) {
       this.socket.send(JSON.stringify(msg));
     } else {
-      console.log('No websocket connection has been made.');
+      this.connect();
+      this.socket.onopen = () => {
+        console.log('WebSocket connected');
+        this.send(msg);
+      }
     }
   }
 
   close() {
     if (this.socket) {
       this.socket.close();
+      this.socket = null;
     }
   }
 

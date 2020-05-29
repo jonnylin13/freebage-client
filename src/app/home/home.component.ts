@@ -14,14 +14,23 @@ export class HomeComponent implements OnInit {
   currentPage: string = 'home';
   lobbyId: string;
 
-  constructor(private gameClient: GameClientService) { 
+  constructor(public gameClient: GameClientService) { 
   }
 
   ngOnInit() {
     this.sub = this.gameClient.getMessages().subscribe(data => {
       console.log(data);
-      if (data.type == 'leave_ack' && data.code == 1) {
-        this.goHome();
+      switch(data.type) {
+        case 'leave_ack':
+          if (data.code == 1) {
+            this.goHome();
+            this.gameClient.close();
+          }
+          break;
+        case 'handshake_ack':
+          if (data.code == 1 || data.code == 2)
+            this.currentPage = 'waiting';
+          break;
       }
     });
 
@@ -31,26 +40,28 @@ export class HomeComponent implements OnInit {
     this.sub.unsubscribe();
   }
 
-  joinLobby() {
-    this.currentPage = 'join-lobby';
-  }
-
   submitJoinLobby() {
     this.gameClient.send({type: 'handshake', name: this.playerName, lobbyId: this.lobbyId});
-    this.currentPage = 'waiting';
   }
 
   goHome() {
     this.currentPage = 'home';
   }
 
-  createLobby() {
+  goJoinLobby() {
+    this.currentPage = 'join-lobby';
+  }
+
+  submitCreateLobby() {
     this.gameClient.send({type: 'handshake', name: this.playerName});
-    this.currentPage = 'waiting';
+  }
+
+  startGame() {
+    this.gameClient.send({type: 'start', playerId: this.gameClient.playerId, lobbyId: this.gameClient.lobby.id});
   }
 
   leaveGame() {
-    this.gameClient.send({type: 'leave', playerId: this.gameClient.playerId, lobbyId: this.gameClient.lobbyId});
+    this.gameClient.send({type: 'leave', playerId: this.gameClient.playerId, lobbyId: this.gameClient.lobby.id});
   }
 
 }
