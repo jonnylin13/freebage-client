@@ -50,7 +50,7 @@ export class GameClientService {
         if (data.code >= 1)
           this.lobby.id = data.lobbyId;
         if (data.code == 1)
-          this.playerId = data.controller;
+          this.playerId = data.controllerId;
         if (data.code == 2) {
           // this.lobby.players.push({name: data.name, id: data.playerId});
           this.playerId = data.playerId;

@@ -31,6 +31,10 @@ export class HomeComponent implements OnInit {
           if (data.code == 1 || data.code == 2)
             this.currentPage = 'waiting';
           break;
+        case 'kick':
+          this.goHome();
+          this.gameClient.close();
+          break;
       }
     });
 
